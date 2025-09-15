@@ -1,0 +1,20 @@
+{
+  "name": "qualtrics-ai-nudge-dev",
+  "version": "1.0.0",
+  "description": "Development mock server for AI nudge testing",
+  "main": "mock-nudge-server.js",
+  "scripts": {
+    "start": "node mock-nudge-server.js",
+    "dev": "node mock-nudge-server.js",
+    "test": "node test-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "openai": "^4.20.0",
+    "node-fetch": "^2.7.0"
+  },
+  "keywords": ["qualtrics", "ai", "nudge", "mock", "dev"],
+  "author": "",
+  "license": "MIT"
+}
