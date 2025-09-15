@@ -231,12 +231,25 @@ app.get('/health', (req, res) => {
 });
 
 const port = process.env.PORT || 8787;
-app.listen(port, () => {
-  console.log(`AI Nudge server listening on http://localhost:${port}/nudge`);
-  console.log(`Health check: http://localhost:${port}/health`);
+
+// Add error handling for server startup
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`AI Nudge server listening on http://0.0.0.0:${port}/nudge`);
+  console.log(`Health check: http://0.0.0.0:${port}/health`);
   if (!process.env.OPENAI_API_KEY) {
     console.warn('⚠️  OPENAI_API_KEY not set - will use fallback rule-based nudges');
   } else {
     console.log('✅ OpenAI API key found - GPT-powered nudges enabled');
   }
+  console.log('🚀 Server is ready to accept requests');
 });
