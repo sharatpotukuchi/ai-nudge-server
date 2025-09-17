@@ -69,8 +69,11 @@ function interpretCCTScore(cctScore) {
 // Generate personalized nudge using GPT
 async function generatePersonalizedNudge(scenario) {
   try {
-    const { exec, sym, last, bid, ask, fair_value, anchor_target, sentiment_pct, hot_condition, profile } = scenario;
+    const { exec, sym, last, bid, ask, fair_value, anchor_target, sentiment_pct, hot_condition, profile, portfolio, scenario: scenarioInfo, trading_context } = scenario;
     const cctInfo = interpretCCTScore(profile?.cct_score);
+    
+    // Detect if this is enhanced payload
+    const isEnhancedPayload = !!(portfolio || scenarioInfo || trading_context);
     
     // Build context for GPT
     const context = {
@@ -95,9 +98,40 @@ async function generatePersonalizedNudge(scenario) {
       },
       participant: {
         cctScore: profile?.cct_score,
+        cctHotScore: profile?.cct_hot_score,
+        cctColdScore: profile?.cct_cold_score,
+        cctHotColdDiff: profile?.cct_hot_cold_diff,
         cctLevel: cctInfo.level,
         screenerData: profile?.screener || {}
-      }
+      },
+      // Enhanced context (only if available)
+      portfolio: isEnhancedPayload ? {
+        balance: portfolio?.balance,
+        position: portfolio?.posQty,
+        avgPrice: portfolio?.posPx,
+        unrealizedPL: portfolio?.unrealizedPL,
+        realizedPL: portfolio?.realizedPL,
+        maxDrawdown: portfolio?.maxDrawdown,
+        maxDrawdownPct: portfolio?.maxDrawdownPct,
+        totalReturn: portfolio?.totalReturn,
+        tradeCount: portfolio?.tradeCount,
+        currentDrawdown: portfolio?.currentDrawdown,
+        currentDrawdownPct: portfolio?.currentDrawdownPct
+      } : null,
+      scenario: isEnhancedPayload ? {
+        name: scenarioInfo?.name,
+        sessionTag: scenarioInfo?.session_tag,
+        newsHead: scenarioInfo?.news_head,
+        biasFocus: scenarioInfo?.bias_focus,
+        timerSec: scenarioInfo?.timer_sec
+      } : null,
+      tradingContext: isEnhancedPayload ? {
+        startBalance: trading_context?.scenario_start_balance,
+        startPosition: trading_context?.scenario_start_position,
+        startPrice: trading_context?.scenario_start_price,
+        previousTrades: trading_context?.previous_trades_count,
+        previousRealizedPL: trading_context?.previous_realized_pl
+      } : null
     };
 
     // Create GPT prompt for academic research context
@@ -107,20 +141,28 @@ SCENARIO:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
 - Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying=${context.analysis.sentimentPercent}%
-- Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)
-- Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}
+- Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)${context.participant.cctHotScore ? `, Hot/Cold: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}
+- Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}${context.scenario?.timerSec ? ` (${context.scenario.timerSec}s timer)` : ''}
 
-ACADEMIC RESEARCH GUIDELINES:
+${isEnhancedPayload ? `ENHANCED CONTEXT:
+- Portfolio: Balance=$${context.portfolio.balance}, Position=${context.portfolio.position}@$${context.portfolio.avgPrice}, Unrealized P&L=$${context.portfolio.unrealizedPL}, Realized P&L=$${context.portfolio.realizedPL}
+- Performance: Total Return=${(context.portfolio.totalReturn * 100).toFixed(2)}%, Max Drawdown=${context.portfolio.maxDrawdownPct}%, Current Drawdown=${context.portfolio.currentDrawdownPct}%
+- Trading History: ${context.portfolio.tradeCount} trades completed, Previous P&L=$${context.tradingContext.previousRealizedPL}
+- Scenario: ${context.scenario.name} (${context.scenario.sessionTag}), News: ${context.scenario.newsHead}
+- Bias Focus: ${context.scenario.biasFocus}
+
+` : ''}ACADEMIC RESEARCH GUIDELINES:
 1. Choose 1-2 most relevant behavioral biases to address
 2. Use academic, neutral language appropriate for research
 3. Be helpful but NOT prescriptive - never tell them what to do
 4. Keep response under 150 words
 5. Focus on decision-making process, NOT specific trade advice
-6. Consider the participant's risk profile (CCT score)
+6. Consider the participant's risk profile (CCT score and hot/cold patterns)
 7. NEVER give financial advice or recommend specific actions
 8. Focus on awareness of biases, not solutions
 9. Use phrases like "consider", "be aware", "reflect on" - never "should", "must", "recommend"
 10. Maintain research neutrality - don't advantage treatment group unfairly
+${isEnhancedPayload ? '11. Use portfolio context to provide more relevant bias awareness\n12. Consider trading history and performance patterns' : ''}
 
 AVAILABLE NUDGE CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
@@ -128,6 +170,7 @@ AVAILABLE NUDGE CATEGORIES:
 - Herding Bias: Address high investor buying activity
 - Hot Decisions: Warn about time pressure effects
 - Risk Awareness: Tailor advice based on CCT score
+${isEnhancedPayload ? '- Portfolio Risk: Address drawdown, position sizing, performance patterns\n- Behavioral Patterns: Use hot/cold CCT differences and trading history' : ''}
 
 Generate a personalized nudge that addresses the most relevant behavioral bias for this specific scenario.`;
 
@@ -173,13 +216,18 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
     const fv = scenario.fair_value;
     const last = scenario.last;
     const cctInfo = interpretCCTScore(scenario.profile?.cct_score);
+    const isEnhancedPayload = !!(scenario.portfolio || scenario.scenario || scenario.trading_context);
     
     const fallbackAdvice = [
       `You are placing ${qty} ${side} on ${sym}.`,
       fv && last ? `Entry vs. fair value: ${(last - fv).toFixed(2)}.` : null,
       `Risk note (CCT ${cctInfo.level}): ${cctInfo.advice}.`,
       scenario.sentiment_pct >= 70 ? 'High investor buying activity may indicate herding behavior.' : null,
-      scenario.hot_condition === '1' ? 'Timer pressure can affect decision quality.' : null
+      scenario.hot_condition === '1' ? 'Timer pressure can affect decision quality.' : null,
+      // Enhanced fallback advice
+      isEnhancedPayload && scenario.portfolio ? `Portfolio: $${scenario.portfolio.balance} balance, ${scenario.portfolio.posQty} position, ${scenario.portfolio.unrealizedPL >= 0 ? '+' : ''}$${scenario.portfolio.unrealizedPL} unrealized P&L.` : null,
+      isEnhancedPayload && scenario.portfolio?.maxDrawdownPct > 2 ? `You're currently ${scenario.portfolio.currentDrawdownPct}% below peak. Consider risk management.` : null,
+      isEnhancedPayload && scenario.profile?.cct_hot_cold_diff ? `Your risk-taking shows ${scenario.profile.cct_hot_cold_diff > 0 ? 'more caution under pressure' : 'consistent risk-taking across conditions'}.` : null
     ].filter(Boolean).join(' ');
 
     return {
@@ -189,7 +237,8 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
       meta: {
         received_at: Date.now(),
         error: error.message,
-        fallback: true
+        fallback: true,
+        enhanced_payload: isEnhancedPayload
       }
     };
   }
@@ -198,12 +247,18 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
 app.post('/nudge', async (req, res) => {
   try {
     const body = req.body || {};
+    const isEnhancedPayload = !!(body.portfolio || body.scenario || body.trading_context);
+    
     console.log('Received nudge request:', {
       symbol: body.sym,
       side: body.exec?.side,
       qty: body.exec?.qty,
       cct_score: body.profile?.cct_score,
-      sentiment: body.sentiment_pct
+      sentiment: body.sentiment_pct,
+      payload_type: isEnhancedPayload ? 'enhanced' : 'basic',
+      has_portfolio: !!body.portfolio,
+      has_scenario: !!body.scenario,
+      has_trading_context: !!body.trading_context
     });
     console.log('Request headers:', req.headers);
     console.log('Request timestamp:', new Date().toISOString());
