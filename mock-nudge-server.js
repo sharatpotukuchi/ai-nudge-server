@@ -35,7 +35,7 @@ const NUDGE_CATEGORIES = {
   'herding_bias': {
     title: 'Herding Bias Awareness',
     templates: [
-      'High sentiment ({pct}%) may indicate herding behavior.',
+      'High investor buying activity ({pct}%) may indicate herding behavior.',
       'Consider whether others\' actions reflect your own analysis.',
       'Avoid following the crowd without independent evaluation.'
     ]
@@ -106,7 +106,7 @@ async function generatePersonalizedNudge(scenario) {
 SCENARIO:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
-- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Sentiment=${context.analysis.sentimentPercent}%
+- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying=${context.analysis.sentimentPercent}%
 - Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)
 - Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}
 
@@ -125,7 +125,7 @@ ACADEMIC RESEARCH GUIDELINES:
 AVAILABLE NUDGE CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
 - Fair Value Anchor: Compare entry price to fair value estimates
-- Herding Bias: Address high sentiment percentages
+- Herding Bias: Address high investor buying activity
 - Hot Decisions: Warn about time pressure effects
 - Risk Awareness: Tailor advice based on CCT score
 
@@ -151,7 +151,7 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
     
     return {
       model: 'gpt-4o-mini',
-      suggestion_html: `<div><b>AI Research Nudge:</b> ${nudgeText}</div>`,
+      suggestion_html: `<div><b>AI Trade Feedback:</b> ${nudgeText}</div>`,
       suggestion_text: nudgeText,
       meta: {
         received_at: Date.now(),
@@ -178,13 +178,13 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
       `You are placing ${qty} ${side} on ${sym}.`,
       fv && last ? `Entry vs. fair value: ${(last - fv).toFixed(2)}.` : null,
       `Risk note (CCT ${cctInfo.level}): ${cctInfo.advice}.`,
-      scenario.sentiment_pct >= 70 ? 'High sentiment may indicate herding behavior.' : null,
+      scenario.sentiment_pct >= 70 ? 'High investor buying activity may indicate herding behavior.' : null,
       scenario.hot_condition === '1' ? 'Timer pressure can affect decision quality.' : null
     ].filter(Boolean).join(' ');
 
     return {
       model: 'fallback-rule-based',
-      suggestion_html: `<div><b>Research Nudge:</b> ${fallbackAdvice}</div>`,
+      suggestion_html: `<div><b>AI Trade Feedback:</b> ${fallbackAdvice}</div>`,
       suggestion_text: fallbackAdvice,
       meta: {
         received_at: Date.now(),
@@ -231,25 +231,12 @@ app.get('/health', (req, res) => {
 });
 
 const port = process.env.PORT || 8787;
-
-// Add error handling for server startup
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
-});
-
-app.listen(port, '0.0.0.0', () => {
-  console.log(`AI Nudge server listening on http://0.0.0.0:${port}/nudge`);
-  console.log(`Health check: http://0.0.0.0:${port}/health`);
+app.listen(port, () => {
+  console.log(`AI Nudge server listening on http://localhost:${port}/nudge`);
+  console.log(`Health check: http://localhost:${port}/health`);
   if (!process.env.OPENAI_API_KEY) {
     console.warn('⚠️  OPENAI_API_KEY not set - will use fallback rule-based nudges');
   } else {
     console.log('✅ OpenAI API key found - GPT-powered nudges enabled');
   }
-  console.log('🚀 Server is ready to accept requests');
 });
