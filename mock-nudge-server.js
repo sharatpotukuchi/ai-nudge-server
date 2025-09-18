@@ -97,11 +97,33 @@ async function generatePersonalizedNudge(scenario) {
         isHotCondition: hot_condition === '1' || hot_condition === true
       },
       participant: {
+        // Demographics
+        age: profile?.demographics?.age,
+        gender: profile?.demographics?.gender,
+        education: profile?.demographics?.education,
+        householdIncome: profile?.demographics?.household_income,
+        employment: profile?.demographics?.employment,
+        
+        // Trading Experience & Knowledge
+        tradingExperience: profile?.experience?.trading_years,
+        confidence: profile?.experience?.confidence,
+        financialEducation: profile?.experience?.financial_education,
+        investmentTypes: profile?.experience?.investment_types,
+        marketKnowledge: profile?.experience?.market_knowledge,
+        
+        // Psychological Traits & State
+        regretAvoidance: profile?.psychological_traits?.regret_avoidance,
+        preMood: profile?.psychological_traits?.pre_mood,
+        preDecisionFatigue: profile?.psychological_traits?.pre_decision_fatigue,
+        
+        // CCT Risk Profile
         cctScore: profile?.cct_score,
         cctHotScore: profile?.cct_hot_score,
         cctColdScore: profile?.cct_cold_score,
         cctHotColdDiff: profile?.cct_hot_cold_diff,
         cctLevel: cctInfo.level,
+        
+        // Legacy fields for backward compatibility
         screenerData: profile?.screener || {}
       },
       // Enhanced context (only if available)
@@ -142,6 +164,9 @@ SCENARIO:
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
 - Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying=${context.analysis.sentimentPercent}%
 - Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)${context.participant.cctHotScore ? `, Hot/Cold: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}
+- Demographics: ${context.participant.age || 'Unknown'} ${context.participant.gender || 'Unknown'}, ${context.participant.education || 'Unknown'} education, ${context.participant.householdIncome || 'Unknown'} income
+- Experience: ${context.participant.tradingExperience || 'Unknown'} trading experience, ${context.participant.confidence || 'Unknown'}/10 confidence, ${context.participant.marketKnowledge || 'Unknown'} market knowledge
+- State: ${context.participant.preMood || 'Unknown'} mood, ${context.participant.preDecisionFatigue || 'Unknown'} decision fatigue, ${context.participant.regretAvoidance || 'Unknown'}/7 regret avoidance
 - Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}${context.scenario?.timerSec ? ` (${context.scenario.timerSec}s timer)` : ''}
 
 ${isEnhancedPayload ? `ENHANCED CONTEXT:
@@ -224,6 +249,10 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
       `Risk note (CCT ${cctInfo.level}): ${cctInfo.advice}.`,
       scenario.sentiment_pct >= 70 ? 'High investor buying activity may indicate herding behavior.' : null,
       scenario.hot_condition === '1' ? 'Timer pressure can affect decision quality.' : null,
+      // Participant context
+      scenario.profile?.demographics?.trading_experience ? `Your ${scenario.profile.demographics.trading_experience} experience suggests ${scenario.profile.demographics.trading_experience.includes('None') || scenario.profile.demographics.trading_experience.includes('Less than') ? 'caution' : 'consideration'} of all factors.` : null,
+      scenario.profile?.psychological_traits?.pre_mood ? `Your current mood (${scenario.profile.psychological_traits.pre_mood}) may influence decision-making.` : null,
+      scenario.profile?.psychological_traits?.pre_decision_fatigue ? `Decision fatigue level (${scenario.profile.psychological_traits.pre_decision_fatigue}) may affect judgment.` : null,
       // Enhanced fallback advice
       isEnhancedPayload && scenario.portfolio ? `Portfolio: $${scenario.portfolio.balance} balance, ${scenario.portfolio.posQty} position, ${scenario.portfolio.unrealizedPL >= 0 ? '+' : ''}$${scenario.portfolio.unrealizedPL} unrealized P&L.` : null,
       isEnhancedPayload && scenario.portfolio?.maxDrawdownPct > 2 ? `You're currently ${scenario.portfolio.currentDrawdownPct}% below peak. Consider risk management.` : null,
@@ -258,7 +287,15 @@ app.post('/nudge', async (req, res) => {
       payload_type: isEnhancedPayload ? 'enhanced' : 'basic',
       has_portfolio: !!body.portfolio,
       has_scenario: !!body.scenario,
-      has_trading_context: !!body.trading_context
+      has_trading_context: !!body.trading_context,
+      // Participant demographics
+      age: body.profile?.demographics?.age,
+      gender: body.profile?.demographics?.gender,
+      education: body.profile?.demographics?.education,
+      trading_experience: body.profile?.experience?.trading_years,
+      confidence: body.profile?.experience?.confidence,
+      pre_mood: body.profile?.psychological_traits?.pre_mood,
+      pre_decision_fatigue: body.profile?.psychological_traits?.pre_decision_fatigue
     });
     console.log('Request headers:', req.headers);
     console.log('Request timestamp:', new Date().toISOString());
