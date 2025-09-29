@@ -162,7 +162,7 @@ async function generatePersonalizedNudge(scenario) {
 SCENARIO:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
-- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying=${context.analysis.sentimentPercent}%
+- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying Activity=${context.analysis.sentimentPercent}%
 - Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)${context.participant.cctHotScore ? `, Hot/Cold: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}
 - Demographics: ${context.participant.age || 'Unknown'} ${context.participant.gender || 'Unknown'}, ${context.participant.education || 'Unknown'} education, $${context.participant.personalIncome || 'Unknown'} income
 - Experience: ${context.participant.tradingExperience || 'Unknown'} trading experience, ${context.participant.confidence || 'Unknown'}/10 confidence, ${context.participant.marketKnowledge || 'Unknown'} market knowledge
@@ -308,7 +308,7 @@ async function generateGenericNudge(scenario) {
 SCENARIO:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
-- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying=${context.analysis.sentimentPercent}%
+- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying Activity=${context.analysis.sentimentPercent}%
 - Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}
 
 ACADEMIC RESEARCH GUIDELINES:
