@@ -101,7 +101,7 @@ async function generatePersonalizedNudge(scenario) {
         age: profile?.demographics?.age,
         gender: profile?.demographics?.gender,
         education: profile?.demographics?.education,
-        householdIncome: profile?.demographics?.household_income,
+        personalIncome: profile?.demographics?.personal_income,
         employment: profile?.demographics?.employment,
         
         // Trading Experience & Knowledge
@@ -164,7 +164,7 @@ SCENARIO:
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
 - Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying=${context.analysis.sentimentPercent}%
 - Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)${context.participant.cctHotScore ? `, Hot/Cold: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}
-- Demographics: ${context.participant.age || 'Unknown'} ${context.participant.gender || 'Unknown'}, ${context.participant.education || 'Unknown'} education, ${context.participant.householdIncome || 'Unknown'} income
+- Demographics: ${context.participant.age || 'Unknown'} ${context.participant.gender || 'Unknown'}, ${context.participant.education || 'Unknown'} education, $${context.participant.personalIncome || 'Unknown'} income
 - Experience: ${context.participant.tradingExperience || 'Unknown'} trading experience, ${context.participant.confidence || 'Unknown'}/10 confidence, ${context.participant.marketKnowledge || 'Unknown'} market knowledge
 - State: ${context.participant.preMood || 'Unknown'} mood, ${context.participant.preDecisionFatigue || 'Unknown'} decision fatigue, ${context.participant.regretAvoidance || 'Unknown'}/7 regret avoidance
 - Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}${context.scenario?.timerSec ? ` (${context.scenario.timerSec}s timer)` : ''}
@@ -273,6 +273,184 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
   }
 }
 
+// Generic nudge generation (scenario data only, no personalization)
+async function generateGenericNudge(scenario) {
+  try {
+    const { sym, last, bid, ask, fair_value, anchor_target, sentiment_pct, hot_condition, exec } = scenario;
+    
+    // Generic context (no personalization)
+    const context = {
+      trade: {
+        side: exec?.side || 'Buy',
+        quantity: exec?.qty || 0,
+        orderType: exec?.ordType || 'Market',
+        price: exec?.ordPx || 'Market'
+      },
+      market: {
+        symbol: sym || 'TICKER',
+        lastPrice: last,
+        bid: bid,
+        ask: ask,
+        spread: (ask && bid) ? (ask - bid).toFixed(2) : null
+      },
+      analysis: {
+        fairValue: fair_value,
+        anchorTarget: anchor_target,
+        sentimentPercent: sentiment_pct,
+        isHotCondition: hot_condition === '1' || hot_condition === true
+      }
+      // NO participant data
+    };
+
+    // Generic prompt (no personalization)
+    const prompt = `You are an AI assistant providing generic trading nudges for academic research on behavioral finance. Generate a helpful, neutral nudge based on the trading scenario.
+
+SCENARIO:
+- Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
+- Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
+- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying=${context.analysis.sentimentPercent}%
+- Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}
+
+ACADEMIC RESEARCH GUIDELINES:
+1. Choose 1-2 most relevant behavioral biases to address
+2. Use academic, neutral language appropriate for research
+3. Be helpful but NOT prescriptive - never tell them what to do
+4. Keep response under 150 words
+5. Focus on decision-making process, NOT specific trade advice
+6. NEVER give financial advice or recommend specific actions
+7. Focus on awareness of biases, not solutions
+8. Use phrases like "consider", "be aware", "reflect on" - never "should", "must", "recommend"
+9. Maintain research neutrality - don't advantage treatment group unfairly
+
+AVAILABLE NUDGE CATEGORIES:
+- Execution Cost: Focus on spread, fees, transaction costs
+- Fair Value Anchor: Compare entry price to fair value estimates
+- Herding Bias: Address high investor buying activity
+- Hot Decisions: Warn about time pressure effects
+- Risk Awareness: General risk considerations
+
+Generate a generic nudge that addresses the most relevant behavioral bias for this specific scenario.`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are an AI assistant providing generic behavioral finance nudges for academic research. Your role is to raise awareness of potential biases in decision-making. You must NEVER give financial advice, recommend specific actions, or tell participants what to do. Focus only on making them aware of behavioral biases that might influence their decision-making process. Use neutral, academic language. Never use prescriptive words like 'should', 'must', 'recommend', or 'advise'."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 200,
+      temperature: 0.7
+    });
+
+    const nudgeText = completion.choices[0]?.message?.content?.trim() || 'Consider all factors carefully before making your trading decision.';
+    
+    return {
+      model: 'gpt-4o-mini',
+      suggestion_html: `<div><b>AI Trade Feedback:</b> ${nudgeText}</div>`,
+      suggestion_text: nudgeText,
+      meta: {
+        received_at: Date.now(),
+        sentiment_pct: context.analysis.sentimentPercent,
+        is_hot: context.analysis.isHotCondition,
+        tokens_used: completion.usage?.total_tokens || 0,
+        nudge_type: 'generic'
+      }
+    };
+
+  } catch (error) {
+    console.error('Generic nudge generation error:', error);
+    
+    // Generic fallback
+    const side = scenario.exec?.side || 'Buy';
+    const qty = scenario.exec?.qty || 0;
+    const sym = scenario.sym || 'TICKER';
+    const fv = scenario.fair_value;
+    const last = scenario.last;
+    
+    const fallbackAdvice = [
+      `You are placing ${qty} ${side} on ${sym}.`,
+      fv && last ? `Entry vs. fair value: ${(last - fv).toFixed(2)}.` : null,
+      scenario.sentiment_pct >= 70 ? 'High investor buying activity may indicate herding behavior.' : null,
+      scenario.hot_condition === '1' ? 'Timer pressure can affect decision quality.' : null
+    ].filter(Boolean).join(' ');
+
+    return {
+      model: 'fallback-rule-based',
+      suggestion_html: `<div><b>AI Trade Feedback:</b> ${fallbackAdvice}</div>`,
+      suggestion_text: fallbackAdvice,
+      meta: {
+        received_at: Date.now(),
+        error: error.message,
+        fallback: true,
+        nudge_type: 'generic'
+      }
+    };
+  }
+}
+
+// Generic nudge endpoint (scenario data only, no personalization)
+app.post('/generic-nudge', async (req, res) => {
+  try {
+    const body = req.body || {};
+    
+    console.log('Received generic nudge request:', {
+      symbol: body.sym,
+      side: body.exec?.side,
+      qty: body.exec?.qty,
+      sentiment: body.sentiment_pct,
+      payload_type: 'generic'
+    });
+    
+    const nudge = await generateGenericNudge(body);
+    
+    res.json(nudge);
+  } catch (error) {
+    console.error('Generic nudge error:', error);
+    res.status(500).json({ error: 'Generic nudge generation failed' });
+  }
+});
+
+// Enhanced nudge endpoint (full personalization)
+app.post('/enhanced-nudge', async (req, res) => {
+  try {
+    const body = req.body || {};
+    const isEnhancedPayload = !!(body.portfolio || body.scenario || body.trading_context);
+    
+    console.log('Received enhanced nudge request:', {
+      symbol: body.sym,
+      side: body.exec?.side,
+      qty: body.exec?.qty,
+      cct_score: body.profile?.cct_score,
+      sentiment: body.sentiment_pct,
+      payload_type: isEnhancedPayload ? 'enhanced' : 'basic',
+      has_portfolio: !!body.portfolio,
+      has_scenario: !!body.scenario,
+      has_trading_context: !!body.trading_context,
+      // Participant demographics
+      age: body.profile?.demographics?.age,
+      gender: body.profile?.demographics?.gender,
+      education: body.profile?.demographics?.education,
+      trading_experience: body.profile?.experience?.trading_years,
+      confidence: body.profile?.experience?.confidence,
+      pre_mood: body.profile?.psychological_traits?.pre_mood,
+      pre_decision_fatigue: body.profile?.psychological_traits?.pre_decision_fatigue
+    });
+
+    const nudge = await generatePersonalizedNudge(body);
+    
+    res.json(nudge);
+  } catch (error) {
+    console.error('Enhanced nudge error:', error);
+    res.status(500).json({ error: 'Enhanced nudge generation failed' });
+  }
+});
+
+// Legacy endpoint (for backward compatibility)
 app.post('/nudge', async (req, res) => {
   try {
     const body = req.body || {};
