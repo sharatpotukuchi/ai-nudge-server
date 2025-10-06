@@ -123,6 +123,16 @@ async function generatePersonalizedNudge(scenario) {
         cctHotColdDiff: profile?.cct_hot_cold_diff,
         cctLevel: cctInfo.level,
         
+        // Enhanced CCT Risk Profiling (only for enhanced nudge treatment group)
+        cctRiskProfile: profile?.cct?.risk_profile,
+        cctRiskLevel: profile?.cct?.risk_level,
+        cctRiskScore: profile?.cct?.risk_score,
+        cctRiskType: profile?.cct?.risk_type,
+        cctRiskConsistency: profile?.cct?.risk_consistency,
+        cctRiskPreference: profile?.cct?.risk_preference,
+        cctGainSensitivity: profile?.cct?.gain_sensitivity,
+        cctLossAversion: profile?.cct?.loss_aversion,
+        
         // Legacy fields for backward compatibility
         screenerData: profile?.screener || {}
       },
@@ -163,7 +173,7 @@ SCENARIO:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
 - Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying Activity=${context.analysis.sentimentPercent}%
-- Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)${context.participant.cctHotScore ? `, Hot/Cold: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}
+- Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)${context.participant.cctHotScore ? `, Hot/Cold: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}${context.participant.cctRiskLevel ? `, Risk Profile: ${context.participant.cctRiskLevel} (${context.participant.cctRiskType}), Consistency: ${context.participant.cctRiskConsistency}, Preference: ${context.participant.cctRiskPreference}` : ''}
 - Demographics: ${context.participant.age || 'Unknown'} ${context.participant.gender || 'Unknown'}, ${context.participant.education || 'Unknown'} education, $${context.participant.personalIncome || 'Unknown'} income
 - Experience: ${context.participant.tradingExperience || 'Unknown'} trading experience, ${context.participant.confidence || 'Unknown'}/10 confidence, ${context.participant.marketKnowledge || 'Unknown'} market knowledge
 - State: ${context.participant.preMood || 'Unknown'} mood, ${context.participant.preDecisionFatigue || 'Unknown'} decision fatigue, ${context.participant.regretAvoidance || 'Unknown'}/7 regret avoidance
@@ -194,7 +204,7 @@ AVAILABLE NUDGE CATEGORIES:
 - Fair Value Anchor: Compare entry price to fair value estimates
 - Herding Bias: Address high investor buying activity
 - Hot Decisions: Warn about time pressure effects
-- Risk Awareness: Tailor advice based on CCT score
+- Risk Awareness: Tailor advice based on CCT score and enhanced risk profiling (risk level, consistency, preference, gain/loss sensitivity)
 ${isEnhancedPayload ? '- Portfolio Risk: Address drawdown, position sizing, performance patterns\n- Behavioral Patterns: Use hot/cold CCT differences and trading history' : ''}
 
 Generate a personalized nudge that addresses the most relevant behavioral bias for this specific scenario.`;
