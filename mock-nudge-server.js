@@ -199,6 +199,15 @@ ${isEnhancedPayload ? `ENHANCED CONTEXT:
 10. Maintain research neutrality - don't advantage treatment group unfairly
 ${isEnhancedPayload ? '11. Use portfolio context to provide more relevant bias awareness\n12. Consider trading history and performance patterns' : ''}
 
+PERSONALIZATION STRATEGY:
+- **CCT Risk Profile**: Use ${context.participant.cctRiskLevel || 'standard'} risk level (${context.participant.cctRiskType || 'balanced'}) to tailor risk awareness
+- **Hot/Cold Pattern**: ${context.participant.cctHotColdDiff > 0 ? 'Participant shows more caution under pressure' : context.participant.cctHotColdDiff < 0 ? 'Participant shows more risk-taking under pressure' : 'Participant shows consistent risk-taking across conditions'} - use this pattern to inform bias awareness
+- **Risk Consistency**: ${context.participant.cctRiskConsistency || 'unknown'} consistency suggests ${context.participant.cctRiskConsistency === 'consistent' ? 'predictable risk behavior' : 'variable risk behavior'} - tailor advice accordingly
+- **Gain/Loss Sensitivity**: ${context.participant.cctGainSensitivity || 'unknown'} gain sensitivity and ${context.participant.cctLossAversion || 'unknown'} loss aversion - use to frame risk awareness
+- **Trading Experience**: ${context.participant.tradingExperience || 'Unknown'} experience level - adjust complexity of bias awareness
+- **Current State**: ${context.participant.preMood || 'Unknown'} mood and ${context.participant.preDecisionFatigue || 'Unknown'} fatigue - consider emotional state in bias awareness
+${isEnhancedPayload ? `- **Portfolio Context**: ${context.portfolio.currentDrawdownPct > 5 ? 'Participant is experiencing significant drawdown' : context.portfolio.currentDrawdownPct > 2 ? 'Participant is experiencing moderate drawdown' : 'Participant is near peak performance'} - use this context for risk awareness\n- **Performance Pattern**: ${context.portfolio.totalReturn > 0 ? 'Positive performance' : 'Negative performance'} with ${context.portfolio.tradeCount} trades - consider overconfidence or loss aversion` : ''}
+
 AVAILABLE NUDGE CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
 - Fair Value Anchor: Compare entry price to fair value estimates
