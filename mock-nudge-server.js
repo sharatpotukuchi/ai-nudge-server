@@ -166,38 +166,38 @@ async function generatePersonalizedNudge(scenario) {
       } : null
     };
 
-    // Create GPT prompt for academic research context
-    const prompt = `You are an AI assistant providing trading nudges for academic research on behavioral finance. Generate a helpful, personalized nudge based on the trading scenario.
+    // Create GPT prompt for realistic trading platform context
+    const prompt = `You are a professional trading platform advisor providing real-time market guidance to investors. Generate helpful, personalized trading advice based on current market conditions.
 
-SCENARIO:
+CURRENT MARKET CONDITIONS:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
-- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying Activity=${context.analysis.sentimentPercent}%
-- Participant: CCT Score=${context.participant.cctScore} (${context.participant.cctLevel} risk tolerance)${context.participant.cctHotScore ? `, Hot/Cold: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}${context.participant.cctRiskLevel ? `, Risk Profile: ${context.participant.cctRiskLevel} (${context.participant.cctRiskType}), Consistency: ${context.participant.cctRiskConsistency}, Preference: ${context.participant.cctRiskPreference}` : ''}
-- Demographics: ${context.participant.age || 'Unknown'} ${context.participant.gender || 'Unknown'}, ${context.participant.education || 'Unknown'} education, $${context.participant.personalIncome || 'Unknown'} income
+- Analysis: Fair Value=${context.analysis.fairValue}, Analyst Target=${context.analysis.anchorTarget}, Institutional Activity=${context.analysis.sentimentPercent}%
+- Risk Profile: ${context.participant.cctLevel} risk tolerance (CCT Score: ${context.participant.cctScore})${context.participant.cctHotScore ? `, Hot/Cold Risk Pattern: ${context.participant.cctHotScore}/${context.participant.cctColdScore} (diff: ${context.participant.cctHotColdDiff})` : ''}${context.participant.cctRiskLevel ? `, Risk Profile: ${context.participant.cctRiskLevel} (${context.participant.cctRiskType}), Consistency: ${context.participant.cctRiskConsistency}, Preference: ${context.participant.cctRiskPreference}` : ''}
+- Investor Profile: ${context.participant.age || 'Unknown'} ${context.participant.gender || 'Unknown'}, ${context.participant.education || 'Unknown'} education, $${context.participant.personalIncome || 'Unknown'} income
 - Experience: ${context.participant.tradingExperience || 'Unknown'} trading experience, ${context.participant.confidence || 'Unknown'}/10 confidence, ${context.participant.marketKnowledge || 'Unknown'} market knowledge
-- State: ${context.participant.preMood || 'Unknown'} mood, ${context.participant.preDecisionFatigue || 'Unknown'} decision fatigue, ${context.participant.regretAvoidance || 'Unknown'}/7 regret avoidance
-- Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}${context.scenario?.timerSec ? ` (${context.scenario.timerSec}s timer)` : ''}
+- Current State: ${context.participant.preMood || 'Unknown'} mood, ${context.participant.preDecisionFatigue || 'Unknown'} decision fatigue, ${context.participant.regretAvoidance || 'Unknown'}/7 regret avoidance
+- Market Volatility: ${context.analysis.isHotCondition ? 'High volatility conditions' : 'Standard market conditions'}${context.scenario?.timerSec ? ` (${context.scenario.timerSec}s execution window)` : ''}
 
-${isEnhancedPayload ? `ENHANCED CONTEXT:
+${isEnhancedPayload ? `PORTFOLIO CONTEXT:
 - Portfolio: Balance=$${context.portfolio.balance}, Position=${context.portfolio.position}@$${context.portfolio.avgPrice}, Unrealized P&L=$${context.portfolio.unrealizedPL}, Realized P&L=$${context.portfolio.realizedPL}
 - Performance: Total Return=${(context.portfolio.totalReturn * 100).toFixed(2)}%, Max Drawdown=${context.portfolio.maxDrawdownPct}%, Current Drawdown=${context.portfolio.currentDrawdownPct}%
 - Trading History: ${context.portfolio.tradeCount} trades completed, Previous P&L=$${context.tradingContext.previousRealizedPL}
-- Scenario: ${context.scenario.name} (${context.scenario.sessionTag}), News: ${context.scenario.newsHead}
-- Bias Focus: ${context.scenario.biasFocus}
+- Market News: ${context.scenario.name} (${context.scenario.sessionTag}), Headline: ${context.scenario.newsHead}
+- Market Focus: ${context.scenario.biasFocus}
 
-` : ''}ACADEMIC RESEARCH GUIDELINES:
-1. Choose 1-2 most relevant behavioral biases to address
-2. Use academic, neutral language appropriate for research
-3. Be helpful but NOT prescriptive - never tell them what to do
+` : ''}PROFESSIONAL TRADING GUIDELINES:
+1. Focus on market fundamentals and risk management
+2. Use professional trading terminology
+3. Provide actionable market guidance
 4. Keep response under 150 words
-5. Focus on decision-making process, NOT specific trade advice
-6. Consider the participant's risk profile (CCT score and hot/cold patterns)
-7. NEVER give financial advice or recommend specific actions
-8. Focus on awareness of biases, not solutions
-9. Use phrases like "consider", "be aware", "reflect on" - never "should", "must", "recommend"
-10. Maintain research neutrality - don't advantage treatment group unfairly
-${isEnhancedPayload ? '11. Use portfolio context to provide more relevant bias awareness\n12. Consider trading history and performance patterns' : ''}
+5. Focus on execution strategy and risk assessment
+6. Consider the investor's risk profile and market conditions
+7. Provide specific market analysis and guidance
+8. Focus on position sizing and risk management
+9. Use phrases like "consider", "evaluate", "assess" - professional trading language
+10. Maintain realistic trading platform tone
+${isEnhancedPayload ? '11. Use portfolio context to provide relevant market guidance\n12. Consider trading history and performance patterns for risk assessment' : ''}
 
 PERSONALIZATION STRATEGY:
 - **CCT Risk Profile**: Use ${context.participant.cctRiskLevel || 'standard'} risk level (${context.participant.cctRiskType || 'balanced'}) to tailor risk awareness
@@ -223,7 +223,7 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant providing behavioral finance nudges for academic research. Your role is to raise awareness of potential biases in decision-making. You must NEVER give financial advice, recommend specific actions, or tell participants what to do. Focus only on making them aware of behavioral biases that might influence their decision-making process. Use neutral, academic language. Never use prescriptive words like 'should', 'must', 'recommend', or 'advise'."
+          content: "You are a professional trading platform advisor providing real-time market guidance to investors. Your role is to offer professional trading advice that helps users make informed decisions while maintaining realistic market context. Focus on market fundamentals, risk management, and execution strategy. Use professional trading terminology and provide actionable market guidance. Never use academic psychology terms or reference experimental scenarios."
         },
         {
           role: "user",
@@ -265,17 +265,17 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
     const fallbackAdvice = [
       `You are placing ${qty} ${side} on ${sym}.`,
       fv && last ? `Entry vs. fair value: ${(last - fv).toFixed(2)}.` : null,
-      `Risk note (CCT ${cctInfo.level}): ${cctInfo.advice}.`,
-      scenario.sentiment_pct >= 70 ? 'High investor buying activity may indicate herding behavior.' : null,
-      scenario.hot_condition === '1' ? 'Timer pressure can affect decision quality.' : null,
+      `Risk assessment (${cctInfo.level} risk tolerance): ${cctInfo.advice}.`,
+      scenario.sentiment_pct >= 70 ? 'High institutional activity (${scenario.sentiment_pct}%) creates strong market momentum.' : null,
+      scenario.hot_condition === '1' ? 'Market volatility requires careful execution timing.' : null,
       // Participant context
-      scenario.profile?.demographics?.trading_experience ? `Your ${scenario.profile.demographics.trading_experience} experience suggests ${scenario.profile.demographics.trading_experience.includes('None') || scenario.profile.demographics.trading_experience.includes('Less than') ? 'caution' : 'consideration'} of all factors.` : null,
-      scenario.profile?.psychological_traits?.pre_mood ? `Your current mood (${scenario.profile.psychological_traits.pre_mood}) may influence decision-making.` : null,
-      scenario.profile?.psychological_traits?.pre_decision_fatigue ? `Decision fatigue level (${scenario.profile.psychological_traits.pre_decision_fatigue}) may affect judgment.` : null,
+      scenario.profile?.demographics?.trading_experience ? `Your ${scenario.profile.demographics.trading_experience} experience suggests ${scenario.profile.demographics.trading_experience.includes('None') || scenario.profile.demographics.trading_experience.includes('Less than') ? 'caution' : 'consideration'} of all market factors.` : null,
+      scenario.profile?.psychological_traits?.pre_mood ? `Your current mood (${scenario.profile.psychological_traits.pre_mood}) may influence market assessment.` : null,
+      scenario.profile?.psychological_traits?.pre_decision_fatigue ? `Decision fatigue level (${scenario.profile.psychological_traits.pre_decision_fatigue}) may affect market analysis.` : null,
       // Enhanced fallback advice
       isEnhancedPayload && scenario.portfolio ? `Portfolio: $${scenario.portfolio.balance} balance, ${scenario.portfolio.posQty} position, ${scenario.portfolio.unrealizedPL >= 0 ? '+' : ''}$${scenario.portfolio.unrealizedPL} unrealized P&L.` : null,
-      isEnhancedPayload && scenario.portfolio?.maxDrawdownPct > 2 ? `You're currently ${scenario.portfolio.currentDrawdownPct}% below peak. Consider risk management.` : null,
-      isEnhancedPayload && scenario.profile?.cct_hot_cold_diff ? `Your risk-taking shows ${scenario.profile.cct_hot_cold_diff > 0 ? 'more caution under pressure' : 'consistent risk-taking across conditions'}.` : null
+      isEnhancedPayload && scenario.portfolio?.maxDrawdownPct > 2 ? `You're currently ${scenario.portfolio.currentDrawdownPct}% below peak. Consider risk management strategy.` : null,
+      isEnhancedPayload && scenario.profile?.cct_hot_cold_diff ? `Your risk pattern shows ${scenario.profile.cct_hot_cold_diff > 0 ? 'more caution under market pressure' : 'consistent risk-taking across market conditions'}.` : null
     ].filter(Boolean).join(' ');
 
     return {
@@ -322,40 +322,40 @@ async function generateGenericNudge(scenario) {
     };
 
     // Generic prompt (no personalization)
-    const prompt = `You are an AI assistant providing generic trading nudges for academic research on behavioral finance. Generate a helpful, neutral nudge based on the trading scenario.
+    const prompt = `You are a professional trading platform advisor providing real-time market guidance to investors. Generate helpful, neutral trading advice based on current market conditions.
 
-SCENARIO:
+CURRENT MARKET CONDITIONS:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
 - Market: Last=${context.market.lastPrice}, Bid=${context.market.bid}, Ask=${context.market.ask}${context.market.spread ? `, Spread=$${context.market.spread}` : ''}
-- Analysis: Fair Value=${context.analysis.fairValue}, Anchor=${context.analysis.anchorTarget}, Investors Buying Activity=${context.analysis.sentimentPercent}%
-- Time Pressure: ${context.analysis.isHotCondition ? 'Yes' : 'No'}
+- Analysis: Fair Value=${context.analysis.fairValue}, Analyst Target=${context.analysis.anchorTarget}, Institutional Activity=${context.analysis.sentimentPercent}%
+- Market Volatility: ${context.analysis.isHotCondition ? 'High volatility conditions' : 'Standard market conditions'}
 
-ACADEMIC RESEARCH GUIDELINES:
-1. Choose 1-2 most relevant behavioral biases to address
-2. Use academic, neutral language appropriate for research
-3. Be helpful but NOT prescriptive - never tell them what to do
+PROFESSIONAL TRADING GUIDELINES:
+1. Focus on market fundamentals and risk management
+2. Use professional trading terminology
+3. Provide actionable market guidance
 4. Keep response under 150 words
-5. Focus on decision-making process, NOT specific trade advice
-6. NEVER give financial advice or recommend specific actions
-7. Focus on awareness of biases, not solutions
-8. Use phrases like "consider", "be aware", "reflect on" - never "should", "must", "recommend"
-9. Maintain research neutrality - don't advantage treatment group unfairly
+5. Focus on execution strategy and risk assessment
+6. Provide specific market analysis and guidance
+7. Focus on position sizing and risk management
+8. Use phrases like "consider", "evaluate", "assess" - professional trading language
+9. Maintain realistic trading platform tone
 
-AVAILABLE NUDGE CATEGORIES:
+AVAILABLE MARKET ANALYSIS CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
-- Fair Value Anchor: Compare entry price to fair value estimates
-- Herding Bias: Address high investor buying activity
-- Hot Decisions: Warn about time pressure effects
-- Risk Awareness: General risk considerations
+- Fair Value Analysis: Compare entry price to fair value estimates
+- Market Momentum: Address high institutional buying activity
+- Volatility Impact: Warn about market volatility effects
+- Risk Assessment: General risk considerations
 
-Generate a generic nudge that addresses the most relevant behavioral bias for this specific scenario.`;
+Generate professional trading guidance that addresses the most relevant market factors for this specific situation.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are an AI assistant providing generic behavioral finance nudges for academic research. Your role is to raise awareness of potential biases in decision-making. You must NEVER give financial advice, recommend specific actions, or tell participants what to do. Focus only on making them aware of behavioral biases that might influence their decision-making process. Use neutral, academic language. Never use prescriptive words like 'should', 'must', 'recommend', or 'advise'."
+          content: "You are a professional trading platform advisor providing real-time market guidance to investors. Your role is to offer professional trading advice that helps users make informed decisions while maintaining realistic market context. Focus on market fundamentals, risk management, and execution strategy. Use professional trading terminology and provide actionable market guidance. Never use academic psychology terms or reference experimental scenarios."
         },
         {
           role: "user",
@@ -394,8 +394,8 @@ Generate a generic nudge that addresses the most relevant behavioral bias for th
     const fallbackAdvice = [
       `You are placing ${qty} ${side} on ${sym}.`,
       fv && last ? `Entry vs. fair value: ${(last - fv).toFixed(2)}.` : null,
-      scenario.sentiment_pct >= 70 ? 'High investor buying activity may indicate herding behavior.' : null,
-      scenario.hot_condition === '1' ? 'Timer pressure can affect decision quality.' : null
+      scenario.sentiment_pct >= 70 ? 'High institutional activity (${scenario.sentiment_pct}%) creates strong market momentum.' : null,
+      scenario.hot_condition === '1' ? 'Market volatility requires careful execution timing.' : null
     ].filter(Boolean).join(' ');
 
     return {
