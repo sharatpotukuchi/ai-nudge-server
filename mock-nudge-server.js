@@ -166,8 +166,8 @@ async function generatePersonalizedNudge(scenario) {
       } : null
     };
 
-    // Create GPT prompt for realistic trading platform context
-    const prompt = `You are a professional trading platform advisor providing real-time market guidance to investors. Generate helpful, personalized trading advice based on current market conditions.
+    // Create GPT prompt for realistic trading platform context - ACADEMICALLY SOUND
+    const prompt = `You are a professional trading platform advisor providing market analysis and considerations to investors. Generate concise, neutral market observations that present key data without giving direct investment advice.
 
 CURRENT MARKET CONDITIONS:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
@@ -186,17 +186,17 @@ ${isEnhancedPayload ? `PORTFOLIO CONTEXT:
 - Market News: ${context.scenario.name} (${context.scenario.sessionTag}), Headline: ${context.scenario.newsHead}
 - Market Focus: ${context.scenario.biasFocus}
 
-` : ''}PROFESSIONAL TRADING GUIDELINES:
-1. Focus on market fundamentals and risk management
-2. Use professional trading terminology
-3. Provide actionable market guidance
-4. Keep response under 150 words
-5. Focus on execution strategy and risk assessment
-6. Consider the investor's risk profile and market conditions
-7. Provide specific market analysis and guidance
-8. Focus on position sizing and risk management
-9. Use phrases like "consider", "evaluate", "assess" - professional trading language
-10. Maintain realistic trading platform tone
+` : ''}ACADEMICALLY SOUND TRADING GUIDELINES (MARKET REALISM):
+1. MAXIMUM 80 WORDS - Concise but complete
+2. Use CONSIDERATION language: "Consider", "Evaluate", "Assess"
+3. Highlight KEY MARKET DATA: Prices, spreads, percentages, volatility
+4. Focus on MARKET CONDITIONS and RISK FACTORS
+5. Present NEUTRAL ANALYSIS - no direct recommendations
+6. Use PROFESSIONAL trading platform language
+7. End with THOUGHT-PROVOKING QUESTION or CONSIDERATION
+8. Avoid financial advice - just market observations
+9. Use trading symbols: $, %, ↑, ↓, ⚠️ for data emphasis
+10. Professional, informative, but not directive tone
 ${isEnhancedPayload ? '11. Use portfolio context to provide relevant market guidance\n12. Consider trading history and performance patterns for risk assessment' : ''}
 
 PERSONALIZATION STRATEGY:
@@ -223,7 +223,7 @@ Generate a personalized nudge that addresses the most relevant behavioral bias f
       messages: [
         {
           role: "system",
-          content: "You are a professional trading platform advisor providing real-time market guidance to investors. Your role is to offer professional trading advice that helps users make informed decisions while maintaining realistic market context. Focus on market fundamentals, risk management, and execution strategy. Use professional trading terminology and provide actionable market guidance. Never use academic psychology terms or reference experimental scenarios."
+          content: "You are a professional trading platform advisor providing market analysis and considerations to investors. Generate concise, neutral market observations (max 80 words) that present key market data and risk factors without giving direct investment advice. Use consideration language ('Consider', 'Evaluate', 'Assess'), highlight important market data, and end with thought-provoking questions. Present neutral analysis of market conditions, spreads, volatility, and risk factors. Use professional trading platform language and trading symbols ($, %, ↑, ↓, ⚠️) for data emphasis. Never use academic psychology terms, reference experimental scenarios, or provide direct buy/sell recommendations."
         },
         {
           role: "user",
@@ -321,8 +321,8 @@ async function generateGenericNudge(scenario) {
       // NO participant data
     };
 
-    // Generic prompt (no personalization)
-    const prompt = `You are a professional trading platform advisor providing real-time market guidance to investors. Generate helpful, neutral trading advice based on current market conditions.
+    // Generic prompt (no personalization) - ACADEMICALLY SOUND
+    const prompt = `You are a professional trading platform advisor providing market analysis and considerations to investors. Generate concise, neutral market observations that present key data without giving direct investment advice.
 
 CURRENT MARKET CONDITIONS:
 - Trade: ${context.trade.side} ${context.trade.quantity} shares of ${context.market.symbol} (${context.trade.orderType} order)
@@ -330,16 +330,17 @@ CURRENT MARKET CONDITIONS:
 - Analysis: Fair Value=${context.analysis.fairValue}, Analyst Target=${context.analysis.anchorTarget}, Institutional Activity=${context.analysis.sentimentPercent}%
 - Market Volatility: ${context.analysis.isHotCondition ? 'High volatility conditions' : 'Standard market conditions'}
 
-PROFESSIONAL TRADING GUIDELINES:
-1. Focus on market fundamentals and risk management
-2. Use professional trading terminology
-3. Provide actionable market guidance
-4. Keep response under 150 words
-5. Focus on execution strategy and risk assessment
-6. Provide specific market analysis and guidance
-7. Focus on position sizing and risk management
-8. Use phrases like "consider", "evaluate", "assess" - professional trading language
-9. Maintain realistic trading platform tone
+ACADEMICALLY SOUND TRADING GUIDELINES (MARKET REALISM):
+1. MAXIMUM 80 WORDS - Concise but complete
+2. Use CONSIDERATION language: "Consider", "Evaluate", "Assess"
+3. Highlight KEY MARKET DATA: Prices, spreads, percentages, volatility
+4. Focus on MARKET CONDITIONS and RISK FACTORS
+5. Present NEUTRAL ANALYSIS - no direct recommendations
+6. Use PROFESSIONAL trading platform language
+7. End with THOUGHT-PROVOKING QUESTION or CONSIDERATION
+8. Avoid financial advice - just market observations
+9. Use trading symbols: $, %, ↑, ↓, ⚠️ for data emphasis
+10. Professional, informative, but not directive tone
 
 AVAILABLE MARKET ANALYSIS CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
@@ -355,7 +356,7 @@ Generate professional trading guidance that addresses the most relevant market f
       messages: [
         {
           role: "system",
-          content: "You are a professional trading platform advisor providing real-time market guidance to investors. Your role is to offer professional trading advice that helps users make informed decisions while maintaining realistic market context. Focus on market fundamentals, risk management, and execution strategy. Use professional trading terminology and provide actionable market guidance. Never use academic psychology terms or reference experimental scenarios."
+          content: "You are a professional trading platform advisor providing market analysis and considerations to investors. Generate concise, neutral market observations (max 80 words) that present key market data and risk factors without giving direct investment advice. Use consideration language ('Consider', 'Evaluate', 'Assess'), highlight important market data, and end with thought-provoking questions. Present neutral analysis of market conditions, spreads, volatility, and risk factors. Use professional trading platform language and trading symbols ($, %, ↑, ↓, ⚠️) for data emphasis. Never use academic psychology terms, reference experimental scenarios, or provide direct buy/sell recommendations."
         },
         {
           role: "user",
