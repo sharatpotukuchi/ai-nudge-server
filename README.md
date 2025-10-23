@@ -17,6 +17,17 @@ This AI-powered nudge server provides **realistic, market-contextual trading nud
 - **Risk Consistency Analysis**: Identifies consistent vs inconsistent risk-taking patterns
 - **Gain/Loss Sensitivity**: Analyzes participant sensitivity to gains and losses
 
+### CCT-Based Personalization Strategy
+- **Risk Profile Analysis**: Uses CCT risk level, score, and consistency to tailor nudges
+- **Hot/Cold Pattern Analysis**: Leverages pressure vs. calm decision-making differences
+- **Gain/Loss Sensitivity Mapping**: Maps sensitivity patterns to specific bias awareness
+- **Intelligent Bias Selection**: CCT patterns automatically mapped to relevant bias nudges:
+  - High Risk + High Loss Aversion → Loss Aversion Awareness, Risk Awareness
+  - Low Risk + High Gain Sensitivity → FOMO Awareness, Present Bias Awareness
+  - Inconsistent Risk → Decision Fatigue Awareness, Confirmation Bias Awareness
+  - High Risk + High Hot Score → Overtrading Awareness, Status Quo Bias Awareness
+  - Low Risk + High Cold Score → Disposition Effect Awareness, Base Rate Neglect Awareness
+
 ### Treatment Group Support
 - **Control Group**: No nudges provided
 - **Generic Nudge Group**: Basic nudges without CCT data
@@ -29,6 +40,8 @@ This AI-powered nudge server provides **realistic, market-contextual trading nud
 - **Market-Realistic Language**: Professional trading advice instead of academic language
 - **Time-Pressure Optimization**: Nudges designed for quick reading under time constraints
 - **Comprehensive Bias Coverage**: All 9 behavioral biases now have awareness nudges
+- **CCT-Based Personalization**: Sophisticated bias selection based on risk profiles
+- **Intelligent Bias Mapping**: CCT patterns mapped to specific bias awareness nudges
 
 ### Comprehensive Nudge Categories
 - **Execution Cost Awareness**: Focus on transaction costs and spreads
