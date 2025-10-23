@@ -271,14 +271,35 @@ ${isEnhancedPayload ? `PORTFOLIO CONTEXT:
 10. Professional, informative, but not directive tone
 ${isEnhancedPayload ? '11. Use portfolio context to provide relevant market guidance\n12. Consider trading history and performance patterns for risk assessment' : ''}
 
-PERSONALIZATION STRATEGY:
-- **CCT Risk Profile**: Use ${context.participant.cctRiskLevel || 'standard'} risk level (${context.participant.cctRiskType || 'balanced'}) to tailor risk awareness
-- **Hot/Cold Pattern**: ${context.participant.cctHotColdDiff > 0 ? 'Participant shows more caution under pressure' : context.participant.cctHotColdDiff < 0 ? 'Participant shows more risk-taking under pressure' : 'Participant shows consistent risk-taking across conditions'} - use this pattern to inform bias awareness
-- **Risk Consistency**: ${context.participant.cctRiskConsistency || 'unknown'} consistency suggests ${context.participant.cctRiskConsistency === 'consistent' ? 'predictable risk behavior' : 'variable risk behavior'} - tailor advice accordingly
-- **Gain/Loss Sensitivity**: ${context.participant.cctGainSensitivity || 'unknown'} gain sensitivity and ${context.participant.cctLossAversion || 'unknown'} loss aversion - use to frame risk awareness
-- **Trading Experience**: ${context.participant.tradingExperience || 'Unknown'} experience level - adjust complexity of bias awareness
-- **Current State**: ${context.participant.preMood || 'Unknown'} mood and ${context.participant.preDecisionFatigue || 'Unknown'} fatigue - consider emotional state in bias awareness
-${isEnhancedPayload ? `- **Portfolio Context**: ${context.portfolio.currentDrawdownPct > 5 ? 'Participant is experiencing significant drawdown' : context.portfolio.currentDrawdownPct > 2 ? 'Participant is experiencing moderate drawdown' : 'Participant is near peak performance'} - use this context for risk awareness\n- **Performance Pattern**: ${context.portfolio.totalReturn > 0 ? 'Positive performance' : 'Negative performance'} with ${context.portfolio.tradeCount} trades - consider overconfidence or loss aversion` : ''}
+CCT-BASED PERSONALIZATION STRATEGY:
+
+**RISK PROFILE ANALYSIS:**
+- Risk Level: ${context.participant.cctRiskLevel || 'standard'} (${context.participant.cctRiskType || 'balanced'})
+- Risk Score: ${context.participant.cctRiskScore || 'unknown'} (0-1 scale)
+- Risk Consistency: ${context.participant.cctRiskConsistency || 'unknown'} (predictable vs variable behavior)
+
+**HOT/COLD DECISION PATTERNS:**
+- Hot Score: ${context.participant.cctHotScore || 'unknown'} (under pressure)
+- Cold Score: ${context.participant.cctColdScore || 'unknown'} (calm conditions)  
+- Hot/Cold Difference: ${context.participant.cctHotColdDiff || 'unknown'} (${context.participant.cctHotColdDiff > 0 ? 'more cautious under pressure' : context.participant.cctHotColdDiff < 0 ? 'more risk-taking under pressure' : 'consistent across conditions'})
+
+**GAIN/LOSS SENSITIVITY:**
+- Gain Sensitivity: ${context.participant.cctGainSensitivity || 'unknown'} (how much gains motivate)
+- Loss Aversion: ${context.participant.cctLossAversion || 'unknown'} (how much losses deter)
+
+**BIAS AWARENESS MAPPING:**
+Based on CCT profile, prioritize these bias awareness nudges:
+- **High Risk + High Loss Aversion** → Loss Aversion Awareness, Risk Awareness
+- **Low Risk + High Gain Sensitivity** → FOMO Awareness, Present Bias Awareness  
+- **Inconsistent Risk (Hot/Cold Diff > 0.2)** → Decision Fatigue Awareness, Confirmation Bias Awareness
+- **High Risk + High Hot Score** → Overtrading Awareness, Status Quo Bias Awareness
+- **Low Risk + High Cold Score** → Disposition Effect Awareness, Base Rate Neglect Awareness
+
+**CONTEXTUAL FACTORS:**
+- Trading Experience: ${context.participant.tradingExperience || 'Unknown'} (adjust complexity)
+- Current Mood: ${context.participant.preMood || 'Unknown'} (emotional state)
+- Decision Fatigue: ${context.participant.preDecisionFatigue || 'Unknown'} (cognitive load)
+${isEnhancedPayload ? `- Portfolio Drawdown: ${context.portfolio.currentDrawdownPct > 5 ? 'Significant drawdown' : context.portfolio.currentDrawdownPct > 2 ? 'Moderate drawdown' : 'Near peak'} (influence loss aversion awareness)\n- Performance Pattern: ${context.portfolio.totalReturn > 0 ? 'Positive performance' : 'Negative performance'} with ${context.portfolio.tradeCount} trades (influence overconfidence vs loss aversion awareness)` : ''}
 
 AVAILABLE NUDGE CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
@@ -296,7 +317,13 @@ AVAILABLE NUDGE CATEGORIES:
 - Risk Awareness: Tailor advice based on CCT score and enhanced risk profiling (risk level, consistency, preference, gain/loss sensitivity)
 ${isEnhancedPayload ? '- Portfolio Risk: Address drawdown, position sizing, performance patterns\n- Behavioral Patterns: Use hot/cold CCT differences and trading history' : ''}
 
-Generate a personalized nudge that addresses the most relevant behavioral bias for this specific scenario.`;
+**SELECTION CRITERIA:**
+1. **Primary**: Use CCT bias awareness mapping above to select most relevant bias
+2. **Secondary**: Consider market conditions (volatility, sentiment, spreads)
+3. **Tertiary**: Factor in portfolio context and trading history
+4. **Format**: Ultra-concise (max 80 words), market-realistic language, consideration tone
+
+Generate a personalized nudge that addresses the most relevant behavioral bias based on the CCT profile and scenario context.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
