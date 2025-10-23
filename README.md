@@ -1,7 +1,13 @@
 # AI Nudge Server for Qualtrics Trading Simulator
 
 ## Overview
-This AI-powered nudge server provides personalized behavioral finance nudges for the Qualtrics Trading Simulator experiment. The server uses OpenAI's GPT models to generate contextually appropriate nudges based on participant risk profiles, trading behavior, and market conditions.
+This AI-powered nudge server provides **realistic, market-contextual trading nudges** for the Qualtrics Trading Simulator experiment. The server uses OpenAI's GPT models to generate **professional trading platform-style advice** based on participant risk profiles, trading behavior, and market conditions.
+
+**Key Features:**
+- **Market-Realistic Language**: Professional trading platform advisor context
+- **Time-Pressure Optimized**: Ultra-concise nudges (max 80 words)
+- **Visual Enhancement**: Formatted display with colors and symbols
+- **Academic Neutrality**: Maintains research integrity while using realistic language
 
 ## Features
 
@@ -16,11 +22,27 @@ This AI-powered nudge server provides personalized behavioral finance nudges for
 - **Generic Nudge Group**: Basic nudges without CCT data
 - **Enhanced Nudge Group**: Advanced nudges with full CCT risk profiling
 
-### Nudge Categories
+### Recent Enhancements
+- **Realistic Trading Context**: Server acts as professional trading platform advisor
+- **Ultra-Concise Format**: Optimized for time pressure (max 80 words)
+- **Visual Formatting**: Enhanced display with colors, bolding, and symbols
+- **Market-Realistic Language**: Professional trading advice instead of academic language
+- **Time-Pressure Optimization**: Nudges designed for quick reading under time constraints
+- **Comprehensive Bias Coverage**: All 9 behavioral biases now have awareness nudges
+
+### Comprehensive Nudge Categories
 - **Execution Cost Awareness**: Focus on transaction costs and spreads
 - **Fair Value Anchoring**: Compare entry prices to fair value estimates
 - **Herding Bias Awareness**: Address high investor buying activity
-- **Hot Decision Warnings**: Alert about time pressure effects
+- **Disposition Effect Awareness**: Consider position performance vs. market conditions
+- **Loss Aversion Awareness**: Consider risk tolerance vs. potential losses
+- **Confirmation Bias Awareness**: Consider multiple market perspectives
+- **FOMO Awareness**: Consider investment timeline vs. market timing
+- **Overtrading Awareness**: Consider trading frequency vs. opportunities
+- **Present Bias Awareness**: Consider long-term vs. short-term outlook
+- **Status Quo Bias Awareness**: Consider whether market conditions warrant change
+- **Base Rate Neglect Awareness**: Consider overall trends vs. specific signals
+- **Decision Fatigue Awareness**: Consider taking time to reassess conditions
 - **Risk Awareness**: Tailored advice based on CCT risk profiles
 - **Portfolio Risk Management**: Address drawdown and position sizing
 
@@ -157,13 +179,15 @@ See `RAILWAY_DEPLOYMENT.md` for detailed deployment instructions.
 
 ## Academic Research Guidelines
 
-The server follows strict academic research guidelines:
+The server follows strict academic research guidelines while maintaining market realism:
 
-1. **Neutral Language**: Uses academic, non-prescriptive language
+1. **Market-Realistic Language**: Uses professional trading platform language
 2. **Bias Awareness**: Focuses on awareness rather than solutions
 3. **Research Neutrality**: Maintains fairness across treatment groups
 4. **No Financial Advice**: Never provides specific trade recommendations
 5. **Decision Process Focus**: Emphasizes decision-making awareness
+6. **Academic Neutrality**: Maintains research integrity while using realistic language
+7. **Time-Pressure Optimization**: Ultra-concise format for quick reading
 
 ## Response Format
 

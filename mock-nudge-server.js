@@ -14,7 +14,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// Pre-defined nudge categories for academic rigor
+// Comprehensive nudge categories for behavioral bias awareness
 const NUDGE_CATEGORIES = {
   'execution_cost': {
     title: 'Execution Cost Consideration',
@@ -40,12 +40,76 @@ const NUDGE_CATEGORIES = {
       'Avoid following the crowd without independent evaluation.'
     ]
   },
-  'hot_decisions': {
-    title: 'Time Pressure Impact',
+  'disposition_effect': {
+    title: 'Disposition Effect Awareness',
     templates: [
-      'Timer pressure can lead to rushed decisions.',
-      'Take a moment to consider all factors carefully.',
-      'Hot decisions often lead to suboptimal outcomes.'
+      'Consider your position\'s performance vs. current market conditions.',
+      'Evaluate whether holding or selling aligns with market fundamentals.',
+      'Avoid letting past performance bias your current decision.'
+    ]
+  },
+  'loss_aversion': {
+    title: 'Loss Aversion Awareness',
+    templates: [
+      'Consider your risk tolerance vs. potential losses.',
+      'Evaluate whether fear of losses is driving your decision.',
+      'Balance potential gains against acceptable risk levels.'
+    ]
+  },
+  'confirmation_bias': {
+    title: 'Confirmation Bias Awareness',
+    templates: [
+      'Consider multiple perspectives on current market conditions.',
+      'Seek information that challenges your current view.',
+      'Avoid only looking for signals that confirm your position.'
+    ]
+  },
+  'fomo': {
+    title: 'FOMO Awareness',
+    templates: [
+      'Consider your investment timeline vs. market timing.',
+      'Evaluate whether fear of missing out is driving urgency.',
+      'Focus on your strategy rather than market noise.'
+    ]
+  },
+  'overtrading': {
+    title: 'Overtrading Awareness',
+    templates: [
+      'Consider your trading frequency vs. market opportunities.',
+      'Evaluate whether you\'re trading too frequently.',
+      'Focus on quality opportunities rather than constant activity.'
+    ]
+  },
+  'present_bias': {
+    title: 'Present Bias Awareness',
+    templates: [
+      'Consider long-term vs. short-term market outlook.',
+      'Evaluate whether immediate gains are worth long-term risks.',
+      'Balance current opportunities with future market conditions.'
+    ]
+  },
+  'status_quo_bias': {
+    title: 'Status Quo Bias Awareness',
+    templates: [
+      'Consider whether market conditions warrant a change.',
+      'Evaluate if maintaining current position is optimal.',
+      'Avoid inertia when market conditions suggest action.'
+    ]
+  },
+  'base_rate_neglect': {
+    title: 'Base Rate Neglect Awareness',
+    templates: [
+      'Consider overall market trends vs. specific signals.',
+      'Evaluate general market statistics alongside specific information.',
+      'Balance broad market context with individual stock factors.'
+    ]
+  },
+  'decision_fatigue': {
+    title: 'Decision Fatigue Awareness',
+    templates: [
+      'Consider taking a moment to reassess market conditions.',
+      'Evaluate whether multiple decisions are affecting your judgment.',
+      'Take time to refresh your perspective on current opportunities.'
     ]
   },
   'cct_risk_awareness': {
@@ -54,6 +118,14 @@ const NUDGE_CATEGORIES = {
       'Given your risk profile, consider position sizing carefully.',
       'Your risk tolerance suggests {advice} for this trade.',
       'Evaluate whether this trade aligns with your risk preferences.'
+    ]
+  },
+  'portfolio_risk': {
+    title: 'Portfolio Risk Management',
+    templates: [
+      'Consider your overall portfolio exposure and diversification.',
+      'Evaluate position sizing relative to your total portfolio.',
+      'Assess whether this trade improves or worsens your risk profile.'
     ]
   }
 };
