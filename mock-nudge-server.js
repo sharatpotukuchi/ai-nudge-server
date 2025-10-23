@@ -284,7 +284,15 @@ AVAILABLE NUDGE CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
 - Fair Value Anchor: Compare entry price to fair value estimates
 - Herding Bias: Address high investor buying activity
-- Hot Decisions: Warn about time pressure effects
+- Disposition Effect: Consider position performance vs. market conditions
+- Loss Aversion: Consider risk tolerance vs. potential losses
+- Confirmation Bias: Consider multiple market perspectives
+- FOMO: Consider investment timeline vs. market timing
+- Overtrading: Consider trading frequency vs. opportunities
+- Present Bias: Consider long-term vs. short-term outlook
+- Status Quo Bias: Consider whether market conditions warrant change
+- Base Rate Neglect: Consider overall trends vs. specific signals
+- Decision Fatigue: Consider taking time to reassess conditions
 - Risk Awareness: Tailor advice based on CCT score and enhanced risk profiling (risk level, consistency, preference, gain/loss sensitivity)
 ${isEnhancedPayload ? '- Portfolio Risk: Address drawdown, position sizing, performance patterns\n- Behavioral Patterns: Use hot/cold CCT differences and trading history' : ''}
 
@@ -418,6 +426,15 @@ AVAILABLE MARKET ANALYSIS CATEGORIES:
 - Execution Cost: Focus on spread, fees, transaction costs
 - Fair Value Analysis: Compare entry price to fair value estimates
 - Market Momentum: Address high institutional buying activity
+- Position Performance: Consider position performance vs. market conditions
+- Risk Tolerance: Consider risk tolerance vs. potential losses
+- Market Perspectives: Consider multiple market perspectives
+- Investment Timeline: Consider investment timeline vs. market timing
+- Trading Frequency: Consider trading frequency vs. opportunities
+- Time Horizon: Consider long-term vs. short-term outlook
+- Market Conditions: Consider whether market conditions warrant change
+- Market Trends: Consider overall trends vs. specific signals
+- Decision Timing: Consider taking time to reassess conditions
 - Volatility Impact: Warn about market volatility effects
 - Risk Assessment: General risk considerations
 
